@@ -4,6 +4,7 @@ import axios from 'axios';
 import ReactPaginate from 'react-paginate';
 
 // 'http://localhost:3000/events?description_like=pilgrims';
+// 'http://localhost:3000/events?q=death&_page=4&_limit=3'
 
 class App extends React.Component {
   constructor(props) {
@@ -12,17 +13,21 @@ class App extends React.Component {
       search: '',
       results: {},
       pageCount: 0,
+      currentPage: 1,
     };
     this.getResults = this.getResults.bind(this);
     this.handleInput = this.handleInput.bind(this);
+    this.changeCurrentPage = this.changeCurrentPage.bind(this);
   }
 
   getResults(e) {
-    e.preventDefault();
-    const { search } = this.state;
-    axios.get(`/events?description_like=${search}`)
+    if (e !== undefined) {
+      e.preventDefault();
+    }
+    const { search, currentPage } = this.state;
+    axios.get(`/events?q=${search}&_page=${currentPage}`)
       .then((results) => {
-        const pageCount = Math.ceil(results.data.length / 10);
+        const pageCount = Math.ceil(results.headers['x-total-count'] / 10);
         this.setState({ results, pageCount });
       })
       .catch(error => console.log(error));
@@ -30,6 +35,14 @@ class App extends React.Component {
 
   handleInput(e) {
     this.setState({ search: e.target.value });
+  }
+
+  changeCurrentPage(page) {
+    new Promise((resolve) => {
+      this.setState({ currentPage: page.selected });
+      resolve();
+    })
+      .then(() => this.getResults());
   }
 
   render() {
@@ -54,6 +67,7 @@ class App extends React.Component {
             pageCount={pageCount}
             marginPagesDisplayed={2}
             pageRangeDisplayed={5}
+            onPageChange={page => this.changeCurrentPage(page)}
           />
         </div>
       </div>
