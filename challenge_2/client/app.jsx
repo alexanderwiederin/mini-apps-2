@@ -33,7 +33,6 @@ class App extends React.Component {
   renderChart() {
     const { node } = this;
     const { labels, data } = this.state;
-    console.log(labels, data)
     const myChart = new Chart(node, {
       type: 'line',
       data: {
@@ -53,6 +52,9 @@ class App extends React.Component {
           style={{ width: 800, height: 300 }}
           ref={node => (this.node = node)}
         />
+        <p>Powered by:
+          <a href="https://www.coindesk.com/price/bitcoin">Coindesk</a>
+        </p>
       </div>
     );
   }
