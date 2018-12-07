@@ -70,10 +70,10 @@ class App extends React.Component {
         />
         <form>
           start:
-          <input id="start" type="date" onChange={(e) => this.handleInputChange(e)} />
+          <input id="start" type="date" onChange={e => this.handleInputChange(e)} />
           end:
-          <input id="end" type="date" onChange={(e) => this.handleInputChange(e)} />
-          <button type="submit" onClick={(e) => this.refreshData(e)}>getData</button>
+          <input id="end" type="date" onChange={e => this.handleInputChange(e)} />
+          <button type="submit" onClick={e => this.refreshData(e)}>getData</button>
         </form>
         <p>
         Powered by:
