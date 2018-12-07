@@ -9,9 +9,13 @@ class App extends React.Component {
     this.state = {
       labels: [],
       data: [],
+      start: '2017-08-02',
+      end: '2018-08-02',
     };
     this.getData = this.getData.bind(this);
     this.renderChart = this.renderChart.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.refreshData = this.refreshData.bind(this);
   }
 
   componentDidMount() {
@@ -19,7 +23,8 @@ class App extends React.Component {
   }
 
   getData() {
-    axios.get('/v1/bpi/historical/close.json')
+    const { start, end } = this.state;
+    axios.get(`/v1/bpi/historical/close.json?start=${start}&end=${end}`)
       .then((results) => {
         const { bpi } = results.data;
         const labels = Object.keys(bpi);
@@ -28,6 +33,17 @@ class App extends React.Component {
         this.renderChart();
       })
       .catch(error => console.log(error));
+  }
+
+  handleInputChange(e) {
+    e.preventDefault();
+    const { id, value } = e.target;
+    this.setState({ [id]: value });
+  }
+
+  refreshData(e) {
+    e.preventDefault();
+    this.getData();
   }
 
   renderChart() {
@@ -52,9 +68,18 @@ class App extends React.Component {
           style={{ width: 800, height: 300 }}
           ref={node => (this.node = node)}
         />
-        <p>Powered by:
+        <form>
+          start:
+          <input id="start" type="date" onChange={e => this.handleInputChange(e)} />
+          end:
+          <input id="end" type="date" onChange={e => this.handleInputChange(e)} />
+          <button type="submit" onClick={e => this.refreshData(e)}>getData</button>
+        </form>
+        <p>
+        Powered by:
           <a href="https://www.coindesk.com/price/bitcoin">Coindesk</a>
         </p>
+
       </div>
     );
   }
